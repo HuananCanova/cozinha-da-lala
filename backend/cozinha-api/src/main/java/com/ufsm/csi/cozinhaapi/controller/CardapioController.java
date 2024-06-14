@@ -1,6 +1,5 @@
 package com.ufsm.csi.cozinhaapi.controller;
 
-
 import com.ufsm.csi.cozinhaapi.model.Cardapio;
 import com.ufsm.csi.cozinhaapi.service.CardapioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +17,20 @@ public class CardapioController {
     private CardapioService cardapioService;
 
     @GetMapping
-    public ResponseEntity<List<Cardapio>> getAllCardapios() {
-        List<Cardapio> cardapios = cardapioService.findAll();
+    public ResponseEntity<List<Cardapio>> listarCardapios() {
+        List<Cardapio> cardapios = cardapioService.listarTodos();
         return new ResponseEntity<>(cardapios, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Cardapio> createCardapio(@RequestBody Cardapio cardapio) {
-        Cardapio newCardapio = cardapioService.save(cardapio);
-        return new ResponseEntity<>(newCardapio, HttpStatus.CREATED);
+    public ResponseEntity<Cardapio> criarCardapio(@RequestBody Cardapio cardapio) {
+        Cardapio novoCardapio = cardapioService.salvar(cardapio);
+        return new ResponseEntity<>(novoCardapio, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cardapio> getCardapioById(@PathVariable Long id) {
-        Optional<Cardapio> cardapio = cardapioService.findById(id);
+    public ResponseEntity<Cardapio> buscarCardapioPorId(@PathVariable Long id) {
+        Optional<Cardapio> cardapio = cardapioService.buscarPorId(id);
         if (cardapio.isPresent()) {
             return new ResponseEntity<>(cardapio.get(), HttpStatus.OK);
         } else {
@@ -40,9 +39,9 @@ public class CardapioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCardapioById(@PathVariable Long id) {
-        if (cardapioService.findById(id).isPresent()) {
-            cardapioService.deleteById(id);
+    public ResponseEntity<Void> deletarCardapioPorId(@PathVariable Long id) {
+        if (cardapioService.buscarPorId(id).isPresent()) {
+            cardapioService.deletarPorId(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -13,20 +13,22 @@ public class CardapioService {
     @Autowired
     private CardapioRepository cardapioRepository;
 
-    public List<Cardapio> findAll() {
+    public List<Cardapio> listarTodos() {
         return cardapioRepository.findAll();
     }
 
-    public Optional<Cardapio> findById(Long id) {
+    public Optional<Cardapio> buscarPorId(Long id) {
         return cardapioRepository.findById(id);
     }
 
-    public Cardapio save(Cardapio cardapio) {
-        return cardapioRepository.save(cardapio);
+    public Cardapio salvar(Cardapio cardapio) {
+        cardapioRepository.save(cardapio);
+        cardapio.setDiaSemana(cardapio.obterNomeDiaDaSemana());
+        cardapioRepository.save(cardapio);
+        return cardapio;
     }
 
-    public void deleteById(Long id) {
+    public void deletarPorId(Long id) {
         cardapioRepository.deleteById(id);
     }
 }
-
