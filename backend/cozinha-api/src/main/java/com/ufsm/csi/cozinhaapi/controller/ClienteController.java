@@ -50,8 +50,13 @@ public class ClienteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarCliente(@PathVariable Long id) {
-        clienteService.deletarCliente(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Optional<Cliente> cliente = clienteService.buscarClientePorId(id);
+        if (cliente.isPresent()) {
+            clienteService.deletarCliente(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
 

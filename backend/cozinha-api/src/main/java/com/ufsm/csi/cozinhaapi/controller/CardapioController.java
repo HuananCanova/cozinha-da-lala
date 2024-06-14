@@ -38,6 +38,22 @@ public class CardapioController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Cardapio> atualizarCardapio(@PathVariable Long id, @RequestBody Cardapio cardapioAtualizado) {
+        Optional<Cardapio> cardapioExistente = cardapioService.buscarPorId(id);
+        if (cardapioExistente.isPresent()) {
+            Cardapio cardapio = cardapioExistente.get();
+            cardapio.setDescricao(cardapioAtualizado.getDescricao());
+            cardapio.setPreco(cardapioAtualizado.getPreco());
+            cardapio.setData(cardapioAtualizado.getData());
+            Cardapio cardapioAtualizadoSalvo = cardapioService.salvar(cardapio);
+            return new ResponseEntity<>(cardapioAtualizadoSalvo, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarCardapioPorId(@PathVariable Long id) {
         if (cardapioService.buscarPorId(id).isPresent()) {
