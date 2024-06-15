@@ -39,7 +39,7 @@ public class PedidoService {
         if (pedidoExistente.isPresent()) {
             Pedido pedido = pedidoExistente.get();
             pedido.setDataPedido(pedidoAtualizado.getDataPedido());
-            pedido.setCliente(pedidoAtualizado.getCliente());
+            pedido.setUsuario(pedidoAtualizado.getUsuario());
             pedido.setCardapio(pedidoAtualizado.getCardapio());
             pedido.setQuantidade(pedidoAtualizado.getQuantidade());
             pedido.setEntrega(pedidoAtualizado.isEntrega());

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cliente {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,5 +24,8 @@ public class Cliente {
     private String telefone;
 
     private String endereco;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }
