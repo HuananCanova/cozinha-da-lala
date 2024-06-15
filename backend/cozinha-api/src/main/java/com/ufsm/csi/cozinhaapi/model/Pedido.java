@@ -20,7 +20,7 @@ public class Pedido {
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "cardapio_id", nullable = false)
