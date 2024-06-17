@@ -1,4 +1,6 @@
 package com.ufsm.csi.cozinhaapi.dto;
 
-public record ResponseDTO(String name, String token){
+import com.ufsm.csi.cozinhaapi.model.Role;
+
+public record ResponseDTO(String name, String token, Role role){
 }

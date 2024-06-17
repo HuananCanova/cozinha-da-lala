@@ -1,5 +1,6 @@
 package com.ufsm.csi.cozinhaapi.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,10 +20,11 @@ public class Usuario {
 
     private String senha;
 
-    private String nomeCompleto;
+    private String nome;
 
     private String telefone;
 
+    @Column(nullable = true)
     private String endereco;
 
     @Enumerated(EnumType.STRING)

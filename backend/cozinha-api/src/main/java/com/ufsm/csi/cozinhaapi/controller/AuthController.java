@@ -5,6 +5,7 @@ import com.ufsm.csi.cozinhaapi.config.security.TokenService;
 import com.ufsm.csi.cozinhaapi.dto.LoginDTO;
 import com.ufsm.csi.cozinhaapi.dto.RegisterRequestDTO;
 import com.ufsm.csi.cozinhaapi.dto.ResponseDTO;
+import com.ufsm.csi.cozinhaapi.model.Role;
 import com.ufsm.csi.cozinhaapi.model.Usuario;
 import com.ufsm.csi.cozinhaapi.repo.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class AuthController {
         Usuario usuario = this.usuarioRepository.findByEmail(loginDTO.email()).orElseThrow(() ->new RuntimeException("usuario nao encontrado"));
         if(passwordEncoder.matches(loginDTO.senha(), usuario.getSenha())){
             String token = this.tokenService.generateToken(usuario);
-            return ResponseEntity.ok(new ResponseDTO(usuario.getNomeCompleto(), token));
+            return ResponseEntity.ok(new ResponseDTO(usuario.getNome(), token, usuario.getRole()));
         }
         return ResponseEntity.badRequest().build();
     }
@@ -45,15 +46,23 @@ public class AuthController {
     public ResponseEntity register(@RequestBody RegisterRequestDTO registerRequestDTO) {
         Optional<Usuario> usuario = this.usuarioRepository.findByEmail(registerRequestDTO.email());
         if (usuario.isEmpty()) {
+            Role role = Role.CLIENTE; // Por padrão, define-se a role como CLIENTE
+
+            if (!this.usuarioRepository.existsByRole(Role.ADMIN)) {
+                role = Role.ADMIN; // Se não houver, define a role como ADMIN
+            }
+
             Usuario newUsuario = new Usuario();
             newUsuario.setEmail(registerRequestDTO.email());
             newUsuario.setSenha(passwordEncoder.encode(registerRequestDTO.senha()));
-            newUsuario.setNomeCompleto(registerRequestDTO.nome());
+            newUsuario.setNome(registerRequestDTO.nome());
             newUsuario.setTelefone(registerRequestDTO.telefone());
+            newUsuario.setEndereco(registerRequestDTO.endereco());
+            newUsuario.setRole(role);
             this.usuarioRepository.save(newUsuario);
 
             String token = this.tokenService.generateToken(newUsuario);
-            return ResponseEntity.ok(new ResponseDTO(newUsuario.getNomeCompleto(), token));
+            return ResponseEntity.ok(new ResponseDTO(newUsuario.getNome(), token, newUsuario.getRole()));
         }
 
         return ResponseEntity.badRequest().build();

@@ -1,10 +1,16 @@
 package com.ufsm.csi.cozinhaapi.controller;
 
+import com.ufsm.csi.cozinhaapi.config.security.CustomUserDetailsService;
 import com.ufsm.csi.cozinhaapi.model.Usuario;
+import com.ufsm.csi.cozinhaapi.repo.UsuarioRepository;
 import com.ufsm.csi.cozinhaapi.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +21,19 @@ import java.util.Optional;
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
-    @PostMapping
-    public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario) {
-        Usuario novoUsuario = usuarioService.criarUsuario(usuario);
-        return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
+
+    @GetMapping("/perfil")
+    public ResponseEntity<Usuario> getAuthenticatedUser(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            Usuario usuario = (Usuario) authentication.getPrincipal();
+
+            return new ResponseEntity<>(usuario, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @GetMapping
@@ -38,24 +52,41 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioAtualizado) {
-        Usuario usuario = usuarioService.atualizarUsuario(id, usuarioAtualizado);
-        if (usuario != null) {
-            return new ResponseEntity<>(usuario, HttpStatus.OK);
+    @PutMapping("/perfil")
+    public ResponseEntity<Usuario> atualizarPerfilUsuario(@AuthenticationPrincipal Usuario usuarioLogado, @RequestBody Usuario usuarioAtualizado) {
+        if (usuarioLogado != null) {
+            // Atualiza os campos do usuário logado com os dados fornecidos
+            usuarioLogado.setNome(usuarioAtualizado.getNome());
+            usuarioLogado.setEmail(usuarioAtualizado.getEmail());
+            usuarioLogado.setTelefone(usuarioAtualizado.getTelefone());
+            usuarioLogado.setEndereco(usuarioAtualizado.getEndereco());
+
+            // Salva as alterações no banco de dados
+            Usuario usuarioAtualizadoNoBanco = usuarioService.atualizarUsuario(usuarioLogado.getId(), usuarioLogado);
+
+            if (usuarioAtualizadoNoBanco != null) {
+                return new ResponseEntity<>(usuarioAtualizadoNoBanco, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
-        Optional<Usuario> usuario = usuarioService.buscarUsuarioPorId(id);
-        if (usuario.isPresent()) {
-            usuarioService.deletarUsuario(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    @DeleteMapping("/perfil")
+    public ResponseEntity<Void> excluirUsuario(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            Usuario usuario = (Usuario) authentication.getPrincipal();
+            usuarioRepository.delete(usuario);
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+
+
+
 }
