@@ -32,8 +32,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/cardapios/home").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, "/cardapios/**").permitAll() // Permite acesso público a todas as rotas GET de cardápios
+                        .requestMatchers(HttpMethod.POST, "/cardapios/**").permitAll() // Permite acesso público a todas as rotas GET de cardápios
+                        .requestMatchers(HttpMethod.GET, "/usuarios/**").permitAll() // Permite acesso público a todas as rotas GET de cardápios
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/**").permitAll() // Permite acesso público a todas as rotas GET de cardápios
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").permitAll() // Permite acesso público a todas as rotas GET de cardápios
+                        //.anyRequest().authenticated()
                 ).addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

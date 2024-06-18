@@ -18,7 +18,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = this.usuarioRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("usuario nao encontrado"));
+        Usuario usuario = this.usuarioRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+
+        // Retorna apenas o email do usuário como nome de usuário durante a autenticação
         return new org.springframework.security.core.userdetails.User(usuario.getEmail(), usuario.getSenha(), new ArrayList<>());
     }
 }
