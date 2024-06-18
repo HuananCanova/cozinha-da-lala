@@ -46,10 +46,10 @@ public class AuthController {
     public ResponseEntity register(@RequestBody RegisterRequestDTO registerRequestDTO) {
         Optional<Usuario> usuario = this.usuarioRepository.findByEmail(registerRequestDTO.email());
         if (usuario.isEmpty()) {
-            Role role = Role.CLIENTE; // Por padrão, define-se a role como CLIENTE
+            Role role = Role.CLIENTE;
 
             if (!this.usuarioRepository.existsByRole(Role.ADMIN)) {
-                role = Role.ADMIN; // Se não houver, define a role como ADMIN
+                role = Role.ADMIN;
             }
 
             Usuario newUsuario = new Usuario();

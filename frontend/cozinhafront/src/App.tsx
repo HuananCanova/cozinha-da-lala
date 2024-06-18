@@ -8,7 +8,7 @@ import { Login } from './pages/login/login';
 import Register from './pages/register/register';
 import Perfil from './pages/perfil/perfil';
 import Cardapio from './pages/cardapio/cardapio';
-import EditarCardapio from './pages/cardapio/cardapio'; // Corrigido o caminho
+import EditarCardapio from './pages/cardapio/cardapio';
 
 function App() {
   const { data, isLoading, isError } = useCardapioData();

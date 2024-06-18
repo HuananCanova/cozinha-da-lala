@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // Importe o Link
+import { useNavigate } from 'react-router-dom'; // Usando useNavigate para redirecionar
+
 import './login.css';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,20 +19,16 @@ export const Login = () => {
         senha
       });
 
-      // Supondo que a resposta contenha um token e o nome do usuário
+      // Supondo que a resposta contenha um token, nome e role do usuário
       const { name, token, role } = response.data;
 
-      // Armazenar o token em localStorage ou cookies
+      // Armazenar o token, nome e role no localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('name', name);
       localStorage.setItem('role', role);
 
-
-      // Redirecionar ou atualizar o estado do usuário logado
-      console.log(`Usuário ${name} logado com sucesso!`);
-
-      // Aqui você pode redirecionar o usuário para a página inicial ou outra página
-      window.location.href = '/';
+      // Redirecionar o usuário para a página inicial
+      navigate('/');
 
     } catch (error) {
       setError('Falha ao fazer login. Verifique suas credenciais.');
@@ -64,7 +62,7 @@ export const Login = () => {
         <button type="submit">Login</button>
       </form>
       {/* Adicione um link para o formulário de cadastro */}
-      <Link to="/register">Não tem uma conta? Cadastre-se aqui.</Link>
+      <a href="/register">Não tem uma conta? Cadastre-se aqui.</a>
     </div>
   );
 };

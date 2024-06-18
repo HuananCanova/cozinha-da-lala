@@ -55,13 +55,11 @@ public class UsuarioController {
     @PutMapping("/perfil")
     public ResponseEntity<Usuario> atualizarPerfilUsuario(@AuthenticationPrincipal Usuario usuarioLogado, @RequestBody Usuario usuarioAtualizado) {
         if (usuarioLogado != null) {
-            // Atualiza os campos do usuário logado com os dados fornecidos
             usuarioLogado.setNome(usuarioAtualizado.getNome());
             usuarioLogado.setEmail(usuarioAtualizado.getEmail());
             usuarioLogado.setTelefone(usuarioAtualizado.getTelefone());
             usuarioLogado.setEndereco(usuarioAtualizado.getEndereco());
 
-            // Salva as alterações no banco de dados
             Usuario usuarioAtualizadoNoBanco = usuarioService.atualizarUsuario(usuarioLogado.getId(), usuarioLogado);
 
             if (usuarioAtualizadoNoBanco != null) {
